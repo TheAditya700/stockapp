@@ -1,50 +1,54 @@
-import React, { useState } from 'react';
-import '../App.css';
-import './Sidebar.css';
+import React, { useState, useEffect } from 'react';
 
-const Sidebar = () => {
-  const [selectedWatchlist, setSelectedWatchlist] = useState('Watchlist 1');
-  const watchlists = ['Watchlist 1', 'Watchlist 2', 'Watchlist 3'];
+const Sidebar = ({ userData, onLogout, onSelectAsset }) => {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+
+  // Fetch assets based on search query or load initial assets
+  useEffect(() => {
+    const fetchAssets = async () => {
+      try {
+        const response = await fetch(`http://127.0.0.1:5000/api/assets/search?q=${searchQuery}`);
+        const data = await response.json();
+        setSearchResults(data);
+      } catch (error) {
+        console.error("Error fetching assets:", error);
+      }
+    };
+
+    fetchAssets();
+  }, [searchQuery]);
+
+  // Handle asset selection
+  const handleAssetClick = (asset) => {
+    onSelectAsset(asset); // Pass the selected asset up to Dashboard
+  };
 
   return (
     <div className="sidebar bg-light p-3">
-      <input type="text" className="form-control mb-3" placeholder="Search for assets" />
+      {/* Search Input */}
+      <input
+        type="text"
+        className="form-control mb-3"
+        placeholder="Search for assets"
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+      />
 
-      <div className="market-indices mb-3">
-        <p>NIFTY 50: <span>24,795.75</span></p>
-        <p>SENSEX: <span>81,050.00</span></p>
-      </div>
-
-      <div className="watchlist">
-        <h3>{selectedWatchlist}</h3>
+      {/* Search Results */}
+      <div className="search-results mt-3">
         <ul className="list-group">
-          <li className="list-group-item d-flex justify-content-between">
-            GOLDBEES <span>₹63.81</span>
-          </li>
-          <li className="list-group-item d-flex justify-content-between">
-            NIFTYBEES <span>₹278.01</span>
-          </li>
-          <li className="list-group-item d-flex justify-content-between">
-            HDFCBANK <span>₹1617.80</span>
-          </li>
-        </ul>
-      </div>
-
-      <div className="watchlist-switcher mt-3">
-        <label htmlFor="watchlist-select">Switch Watchlist</label>
-        <select
-          id="watchlist-select"
-          className="form-select mt-2"
-          value={selectedWatchlist}
-          onChange={(e) => setSelectedWatchlist(e.target.value)}
-        >
-          {watchlists.map((list, index) => (
-            <option key={index} value={list}>
-              {list}
-            </option>
+          {searchResults.map((result) => (
+            <li
+              key={result.aid}
+              className="list-group-item d-flex justify-content-between"
+              onClick={() => handleAssetClick(result)}
+              style={{ cursor: 'pointer' }}
+            >
+              {result.name} <span>₹{result.price}</span>
+            </li>
           ))}
-        </select>
-        <button className="btn btn-primary btn-block mt-3">+ Add Watchlist</button>
+        </ul>
       </div>
     </div>
   );
