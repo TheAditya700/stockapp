@@ -50,7 +50,6 @@ The system is built using a **three-tier architecture**:
 - **Backend:** Python, Flask
 - **Database:** MySQL
 - **Version Control:** Git, GitHub
-- **Deployment:** Heroku (or your preferred platform)
 
 ## Database Schema
 
