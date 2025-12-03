@@ -22,7 +22,7 @@ function Login({ onLogin }) {
 
     try {
       // Login request
-      const loginResponse = await axios.post('http://localhost:5000/login', {
+      const loginResponse = await axios.post('/login', {
         uemail: email,
         password: password
       }, {
@@ -36,7 +36,7 @@ function Login({ onLogin }) {
         const userId = loginResponse.data.user.uid; // Get the user ID
 
         // Fetch full user data with the user ID
-        const userResponse = await axios.get(`http://localhost:5000/user/${userId}`);
+        const userResponse = await axios.get(`/user/${userId}`);
         onLogin(userResponse.data);
       } else {
         setError('Invalid credentials');
@@ -66,7 +66,7 @@ function Login({ onLogin }) {
 
     try {
       // Registration request
-      const registerResponse = await axios.post('http://localhost:5000/register', {
+      const registerResponse = await axios.post('/register', {
         uname: name,
         uemail: email,
         password: password,
@@ -86,7 +86,7 @@ function Login({ onLogin }) {
       if (registerResponse.status === 201) {
         // Optionally, auto-login after successful registration
         const userId = registerResponse.data.user.uid; // Get the user ID
-        const userResponse = await axios.get(`http://localhost:5000/user/${userId}`);
+        const userResponse = await axios.get(`/user/${userId}`);
         onLogin(userResponse.data);
       } else {
         setError('Registration failed. Please try again.');

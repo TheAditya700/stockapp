@@ -16,19 +16,19 @@ const AssetDetails = ({ asset, userData, onSwitchToWatchlist }) => {
   useEffect(() => {
     if (asset?.aid) {
       // Fetch current price
-      fetch(`http://127.0.0.1:5000/api/assets/${asset.aid}`)
+      fetch(`/api/assets/${asset.aid}`)
         .then((res) => res.json())
         .then((data) => setPrice(data.price))
         .catch(() => setError('Could not fetch asset price.'));
 
       // Fetch historical prices
-      fetch(`http://127.0.0.1:5000/api/assets/prices/${asset.aid}`)
+      fetch(`/api/assets/prices/${asset.aid}`)
         .then((res) => res.json())
         .then((data) => setPriceData(data))
         .catch(() => setError('Could not fetch historical price data.'));
 
       // Fetch user's watchlists
-      fetch(`http://127.0.0.1:5000/api/watchlists/${userData.uid}`)
+      fetch(`/api/watchlists/${userData.uid}`)
         .then((res) => res.json())
         .then((data) => {
           setWatchlists(data);
@@ -70,7 +70,7 @@ const AssetDetails = ({ asset, userData, onSwitchToWatchlist }) => {
     };
 
     try {
-      const response = await fetch('http://127.0.0.1:5000/api/place_order', {
+      const response = await fetch('/api/place_order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(orderData),
@@ -94,7 +94,7 @@ const AssetDetails = ({ asset, userData, onSwitchToWatchlist }) => {
       return;
     }
 
-    fetch(`http://127.0.0.1:5000/api/watchlists/${selectedWatchlist}/assets`, {
+    fetch(`/api/watchlists/${selectedWatchlist}/assets`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ aid: asset.aid }),

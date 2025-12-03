@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 
 const Watchlist = ({ userData, activeWatchlist }) => {
   const [watchlists, setWatchlists] = useState([]); // Store the fetched watchlists
@@ -8,7 +8,7 @@ const Watchlist = ({ userData, activeWatchlist }) => {
   const [isAdding, setIsAdding] = useState(false); // Toggle for adding a new watchlist
 
   // Fetch watchlists from API
-  const fetchWatchlists = () => {
+  const fetchWatchlists = useCallback(() => {
     if (userData && userData.uid) {
       fetch(`/api/watchlists/${userData.uid}`) // Fetch user-specific watchlists
         .then((response) => response.json())
@@ -22,25 +22,25 @@ const Watchlist = ({ userData, activeWatchlist }) => {
         })
         .catch((error) => console.error('Error fetching watchlists:', error));
     }
-  };
+  }, [userData, activeWatchlist, setSelectedWatchlist, setWatchlists]);
 
   useEffect(() => {
     fetchWatchlists();
-  }, [userData, activeWatchlist]); // Listen to changes in userData or activeWatchlist
+  }, [userData, activeWatchlist, fetchWatchlists]); // Listen to changes in userData or activeWatchlist
 
   // Fetch assets of the selected watchlist
-  const fetchAssets = () => {
+  const fetchAssets = useCallback(() => {
     if (selectedWatchlist) {
       fetch(`/api/watchlists/${selectedWatchlist}/assets`)
         .then((response) => response.json())
         .then((data) => setWatchlistAssets(data))
         .catch((error) => console.error('Error fetching watchlist assets:', error));
     }
-  };
+  }, [selectedWatchlist, setWatchlistAssets]);
 
   useEffect(() => {
     fetchAssets();
-  }, [selectedWatchlist]);
+  }, [selectedWatchlist, fetchAssets]);
 
   // Add a new watchlist
   const handleAddWatchlist = () => {

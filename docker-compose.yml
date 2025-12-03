@@ -1,0 +1,49 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: mysql_db
+    environment:
+      MYSQL_ROOT_PASSWORD: linux
+      MYSQL_DATABASE: stock_app
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./backend/sql_initialisation:/docker-entrypoint-initdb.d
+    networks:
+      - stockapp-network
+
+  backend:
+    build: ./backend
+    container_name: flask_backend
+    ports:
+      - "5001:5000"
+    environment:
+      - DATABASE_URL=mysql+pymysql://root:linux@db/stock_app
+      - FLASK_APP=flaskapp/app.py
+      - FLASK_RUN_HOST=0.0.0.0
+    volumes:
+      - ./backend:/app
+    depends_on:
+      - db
+    networks:
+      - stockapp-network
+
+  frontend:
+    build: ./frontend
+    container_name: react_frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+    depends_on:
+      - backend
+    networks:
+      - stockapp-network
+
+volumes:
+  mysql_data:
+
+networks:
+  stockapp-network:
+    driver: bridge

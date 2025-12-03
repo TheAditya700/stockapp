@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Pie } from 'react-chartjs-2';
 import 'chart.js/auto';
 
@@ -27,13 +27,13 @@ const Home = ({ userData }) => {
     return `₹${formatted}`;
   };
 
-  const fetchData = () => {
+  const fetchData = useCallback(() => {
     if (userData && userData.uid) {
       setLoading(true); // Reset loading state on visibility
-      fetch(`http://127.0.0.1:5000/api/user/${userData.uid}/funds_status`)
+      fetch(`/api/user/${userData.uid}/funds_status`)
         .then((res) => res.json())
         .then((data) => {
-          const { available_margin_equity, available_margin_commodity, total_pending_cost_equity, total_pending_cost_commodity, utilized_margin_equity, utilized_margin_commodity } = data;
+          const { available_margin_equity, available_margin_commodity, utilized_margin_equity, utilized_margin_commodity } = data;
 
           setAvailableMarginEquity(available_margin_equity);
           setAvailableMarginCommodity(available_margin_commodity);
@@ -41,7 +41,7 @@ const Home = ({ userData }) => {
           setUtilizedMarginCommodity(utilized_margin_commodity); // Set utilized margin for commodity
 
           // Fetch the total portfolio value
-          fetch(`http://127.0.0.1:5000/api/user/${userData.uid}/portfolio_value`)
+          fetch(`/api/user/${userData.uid}/portfolio_value`)
             .then((res) => res.json())
             .then((data) => {
               setPortfolioValue(data.total_portfolio_value || 0);
@@ -51,7 +51,7 @@ const Home = ({ userData }) => {
             });
 
           // Fetch the total portfolio profit and profit percentage
-          fetch(`http://127.0.0.1:5000/api/portfolio/summary/${userData.uid}`)
+          fetch(`/api/portfolio/summary/${userData.uid}`)
             .then((res) => res.json())
             .then((data) => {
               setTotalProfit(data.total_profit || 0);
@@ -68,7 +68,7 @@ const Home = ({ userData }) => {
         });
 
       // Fetch total equity value and total commodity value
-      fetch(`http://127.0.0.1:5000/api/user/${userData.uid}/total_values`)
+      fetch(`/api/user/${userData.uid}/total_values`)
         .then((res) => res.json())
         .then((data) => {
           setTotalEquityValue(data.total_equity_value || 0);
@@ -78,12 +78,12 @@ const Home = ({ userData }) => {
           console.error('Error fetching total values:', error);
         });
     }
-  };
+  }, [userData]);
 
   // Fetch data when component mounts
   useEffect(() => {
     fetchData();
-  }, [userData]);
+  }, [userData, fetchData]);
 
   // Re-fetch data when the page becomes visible
   useEffect(() => {
@@ -97,7 +97,7 @@ const Home = ({ userData }) => {
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, [userData]);
+  }, [userData, fetchData]);
 
   const pieData = {
     labels: ['Equity', 'Commodity'],

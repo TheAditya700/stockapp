@@ -1,26 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 
 const Portfolio = ({ userData, onOrder }) => {
   const [portfolioData, setPortfolioData] = useState([]);
   const [totalProfit, setTotalProfit] = useState(0);
   const [totalProfitPercentage, setTotalProfitPercentage] = useState(0);
-
-  useEffect(() => {
-    if (userData && userData.uid) {
-      fetch(`/api/portfolio/${userData.uid}`)
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-          return response.json();
-        })
-        .then((data) => {
-          setPortfolioData(data);
-          calculateTotalProfitAndPercentage(data);
-        })
-        .catch((error) => console.error('Error fetching portfolio data:', error));
-    }
-  }, [userData]);
 
   // Function to calculate profit and profit percentage
   const calculateProfit = (buyPrice, currentPrice, qty) => {
@@ -53,7 +36,7 @@ const Portfolio = ({ userData, onOrder }) => {
   };
 
   // Function to calculate total profit and total profit percentage for the entire portfolio
-  const calculateTotalProfitAndPercentage = (data) => {
+  const calculateTotalProfitAndPercentage = useCallback((data) => {
     let totalProfitSum = 0;
     let totalInvestment = 0;
     data.forEach((holding) => {
@@ -66,7 +49,24 @@ const Portfolio = ({ userData, onOrder }) => {
     const totalProfitPercent = totalInvestment ? (totalProfitSum / totalInvestment) * 100 : 0;
     setTotalProfit(totalProfitSum.toFixed(2));
     setTotalProfitPercentage(totalProfitPercent.toFixed(2));
-  };
+  }, [setTotalProfit, setTotalProfitPercentage]);
+
+  useEffect(() => {
+    if (userData && userData.uid) {
+      fetch(`/api/portfolio/${userData.uid}`)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+        })
+        .then((data) => {
+          setPortfolioData(data);
+          calculateTotalProfitAndPercentage(data);
+        })
+        .catch((error) => console.error('Error fetching portfolio data:', error));
+    }
+  }, [userData, calculateTotalProfitAndPercentage]);
 
   return (
     <div className="portfolio">

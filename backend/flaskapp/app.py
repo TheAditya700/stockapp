@@ -8,6 +8,7 @@ from routes.watchlist_routes import watchlist_bp
 from routes.user_routes import user_bp
 from flask_cors import CORS  # Import Flask-CORS
 from flask_login import LoginManager
+import os
 
 # Initialize Flask
 app = Flask(__name__)
@@ -17,8 +18,11 @@ app.config['SECRET_KEY'] = 'your_secret_key'
 CORS(app)
 
 
-# Configure the MySQL connection (adjust to your setup)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:linux@localhost/stock_app'
+# Configure the MySQL connection using an environment variable or a default
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
+    'DATABASE_URL', 
+    'mysql+pymysql://root:linux@localhost/stock_app'
+)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialize the database with the app
@@ -47,4 +51,4 @@ def handle_error(e):
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()  # Create tables if they don't exist
-    app.run(debug=True)
+    app.run(host='0.0.0.0', debug=True)

@@ -21,12 +21,12 @@ const UserDetails = ({ userData }) => {
 
     const fetchUserData = async () => {
       try {
-        const userResponse = await fetch(`http://127.0.0.1:5000/user/${userId}`);
+        const userResponse = await fetch(`/user/${userId}`);
         if (!userResponse.ok) throw new Error('Failed to fetch user data');
         const userData = await userResponse.json();
         setUserDetails(userData);
 
-        const addressResponse = await fetch(`http://127.0.0.1:5000/user/${userId}/addresses`);
+        const addressResponse = await fetch(`/user/${userId}/addresses`);
         if (!addressResponse.ok) throw new Error('Failed to fetch addresses');
         const addressData = await addressResponse.json();
         setAddresses(addressData);
@@ -54,7 +54,7 @@ const UserDetails = ({ userData }) => {
     }
 
     try {
-      const response = await fetch(`http://127.0.0.1:5000/user/${userId}/funds`, {
+      const response = await fetch(`/user/${userId}/funds`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -82,7 +82,7 @@ const UserDetails = ({ userData }) => {
 
   const handleAddAddress = async () => {
     try {
-      const response = await fetch(`http://127.0.0.1:5000/user/${userId}/addresses`, {
+      const response = await fetch(`/user/${userId}/addresses`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newAddress),
@@ -99,7 +99,7 @@ const UserDetails = ({ userData }) => {
 
   const handleRemoveAddress = async (addressId) => {
     try {
-      const response = await fetch(`http://127.0.0.1:5000/user/${userId}/addresses/${addressId}`, {
+      const response = await fetch(`/user/${userId}/addresses/${addressId}`, {
         method: 'DELETE',
       });
 
@@ -117,7 +117,7 @@ const UserDetails = ({ userData }) => {
     }
 
     try {
-      const response = await fetch(`http://127.0.0.1:5000/user/${userId}/password`, {
+      const response = await fetch(`/user/${userId}/password`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ current_password: password, new_password: newPassword }),

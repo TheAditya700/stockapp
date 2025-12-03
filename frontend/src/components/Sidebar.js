@@ -8,7 +8,7 @@ const Sidebar = ({ userData, onLogout, onSelectAsset }) => {
   useEffect(() => {
     const fetchAssets = async () => {
       try {
-        const response = await fetch(`http://127.0.0.1:5000/api/assets/search?q=${searchQuery}`);
+        const response = await fetch(`/api/assets/search?q=${searchQuery}`);
         const data = await response.json();
         setSearchResults(data);
       } catch (error) {
