@@ -29,7 +29,7 @@ const Home = ({ userData }) => {
 
   const fetchData = useCallback(() => {
     if (userData && userData.uid) {
-      setLoading(true); // Reset loading state on visibility
+      // removed setLoading(true) to avoid flickering on updates
       fetch(`/api/user/${userData.uid}/funds_status`)
         .then((res) => res.json())
         .then((data) => {
@@ -80,9 +80,11 @@ const Home = ({ userData }) => {
     }
   }, [userData]);
 
-  // Fetch data when component mounts
+  // Fetch data when component mounts and every 10 seconds
   useEffect(() => {
     fetchData();
+    const intervalId = setInterval(fetchData, 10000);
+    return () => clearInterval(intervalId);
   }, [userData, fetchData]);
 
   // Re-fetch data when the page becomes visible
@@ -120,8 +122,8 @@ const Home = ({ userData }) => {
 
       <div className="row mb-4">
         {/* Equity Card */}
-        <div className="col-md-3">
-          <div className="card text-center">
+        <div className="col-md-6 mb-4">
+          <div className="card text-center h-100">
             <div className="card-body">
               <h5 className="card-title">Equity</h5>
               <h2>{formatNumber(availableMarginEquity)}</h2>
@@ -133,8 +135,8 @@ const Home = ({ userData }) => {
         </div>
 
         {/* Commodity Card */}
-        <div className="col-md-3">
-          <div className="card text-center">
+        <div className="col-md-6 mb-4">
+          <div className="card text-center h-100">
             <div className="card-body">
               <h5 className="card-title">Commodity</h5>
               <h2>{formatNumber(availableMarginCommodity)}</h2>
@@ -146,8 +148,8 @@ const Home = ({ userData }) => {
         </div>
 
         {/* Total Profit and Portfolio Value Card */}
-        <div className="col-md-3">
-          <div className="card text-center">
+        <div className="col-md-12 mb-4 h-100">
+          <div className="card text-center h-100">
             <div className="card-body">
               <h5 className="card-title">Total Portfolio Value</h5>
               <h2>{formatNumber(portfolioValue)}</h2>
@@ -158,11 +160,13 @@ const Home = ({ userData }) => {
         </div>
 
         {/* Portfolio Distribution Chart */}
-        <div className="col-md-3">
-          <div className="card text-center">
-            <div className="card-body">
-              <h5 className="card-title">Portfolio Distribution</h5>
-              <Pie data={pieData} />
+        <div className="col-md-12 mb-4 h-100">
+          <div className="card text-center h-100">
+            <div className="card-body d-flex flex-column justify-content-center align-items-center">
+              <h5 className="card-title mb-3">Portfolio Distribution</h5>
+              <div style={{ width: '60%', margin: '0 auto' }}>
+                <Pie data={pieData} />
+              </div>
             </div>
           </div>
         </div>

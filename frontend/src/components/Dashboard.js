@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Home from './Home';
 import Portfolio from './Portfolio';
 import Watchlist from './Watchlist';
@@ -9,6 +9,13 @@ import AssetDetails from './AssetDetails';
 const Dashboard = ({ userData, selectedAsset, setSelectedAsset }) => {
   const [activeTab, setActiveTab] = useState('home');
   const [activeWatchlist, setActiveWatchlist] = useState(null);
+
+  // Automatically switch to "Asset" tab when selectedAsset changes
+  useEffect(() => {
+    if (selectedAsset) {
+      setActiveTab('asset');
+    }
+  }, [selectedAsset]);
 
   const handleOrder = (asset) => {
     setSelectedAsset(asset);

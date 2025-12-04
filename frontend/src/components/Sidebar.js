@@ -17,6 +17,8 @@ const Sidebar = ({ userData, onLogout, onSelectAsset }) => {
     };
 
     fetchAssets();
+    const intervalId = setInterval(fetchAssets, 10000);
+    return () => clearInterval(intervalId);
   }, [searchQuery]);
 
   // Handle asset selection
@@ -25,18 +27,20 @@ const Sidebar = ({ userData, onLogout, onSelectAsset }) => {
   };
 
   return (
-    <div className="sidebar bg-light p-3">
-      {/* Search Input */}
-      <input
-        type="text"
-        className="form-control mb-3"
-        placeholder="Search for assets"
-        value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
-      />
+    <div className="sidebar bg-light p-3 h-100 d-flex flex-column">
+      {/* Search Input - Fixed at top */}
+      <div className="flex-shrink-0">
+        <input
+          type="text"
+          className="form-control mb-3"
+          placeholder="Search for assets"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+      </div>
 
-      {/* Search Results */}
-      <div className="search-results mt-3">
+      {/* Search Results - Scrollable */}
+      <div className="search-results flex-grow-1 overflow-auto">
         <ul className="list-group">
           {searchResults.map((result) => (
             <li

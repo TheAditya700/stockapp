@@ -12,9 +12,11 @@ const AssetDetails = ({ asset, userData, onSwitchToWatchlist }) => {
   const [selectedWatchlist, setSelectedWatchlist] = useState(null); // Selected watchlist for adding the asset
   const [watchlistError, setWatchlistError] = useState(null); // Error message for watchlist addition
 
-  // Fetch asset price, historical prices, and user's watchlists on load
+  // Fetch asset price, historical prices, and user's watchlists on load and interval
   useEffect(() => {
-    if (asset?.aid) {
+    if (!asset?.aid) return;
+
+    const fetchAssetData = () => {
       // Fetch current price
       fetch(`/api/assets/${asset.aid}`)
         .then((res) => res.json())
@@ -26,19 +28,31 @@ const AssetDetails = ({ asset, userData, onSwitchToWatchlist }) => {
         .then((res) => res.json())
         .then((data) => setPriceData(data))
         .catch(() => setError('Could not fetch historical price data.'));
+    };
 
-      // Fetch user's watchlists
-      fetch(`/api/watchlists/${userData.uid}`)
-        .then((res) => res.json())
-        .then((data) => {
-          setWatchlists(data);
-          if (data.length > 0) {
-            setSelectedWatchlist(data[0].wid); // Default to the first watchlist
-          }
-        })
-        .catch(() => setWatchlistError('Could not fetch watchlists.'));
-    }
+    // Fetch immediately
+    fetchAssetData();
+    
+    // Fetch watchlists only once
+    fetch(`/api/watchlists/${userData.uid}`)
+      .then((res) => res.json())
+      .then((data) => {
+        setWatchlists(data);
+        if (data.length > 0) {
+          setSelectedWatchlist(data[0].wid);
+        }
+      })
+      .catch(() => setWatchlistError('Could not fetch watchlists.'));
+
+    // Set up interval for live updates (every 10 seconds)
+    const intervalId = setInterval(fetchAssetData, 10000);
+
+    // Cleanup on unmount
+    return () => clearInterval(intervalId);
+
   }, [asset, userData]);
+
+  // ... (Handle placing order and adding to watchlist - NO CHANGES HERE) ...
 
   // Handle placing an order
   const handlePlaceOrder = async (e) => {
@@ -118,13 +132,18 @@ const AssetDetails = ({ asset, userData, onSwitchToWatchlist }) => {
 
   // Prepare data for the Line chart
   const chartData = {
-    labels: priceData.map((data) => data.date),
+    labels: priceData.map((data) => {
+        // Extract time only: "YYYY-MM-DD HH:mm:ss" -> "HH:mm:ss"
+        const dateStr = data.date;
+        return dateStr.length > 10 ? dateStr.substring(11) : dateStr;
+    }),
     datasets: [
       {
         label: 'Close Price',
         data: priceData.map((data) => data.close_price),
         borderColor: '#007bff',
         fill: false,
+        pointRadius: 1, // Make points smaller for high-density data
       },
     ],
   };

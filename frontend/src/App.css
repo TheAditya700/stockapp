@@ -10,13 +10,6 @@ body {
   display: flex;
 }
 
-.main-content {
-  flex-grow: 1;
-  margin-left: 250px;
-  padding: 20px;
-  background-color: white;
-}
-
 /* Modal overlay for dimmed background */
 .modal-overlay {
   position: fixed;
@@ -73,4 +66,15 @@ body {
 
 .text-dark {
   color: #333; /* Dark text for better readability */
+}
+
+/* Sidebar layout */
+.sidebar-panel {
+  height: 100%;
+  overflow: hidden; /* Scroll is handled internally by Sidebar component */
+}
+
+/* Ensure the Login form is centered vertically */
+.login-container {
+  /* No margin needed as it's centered by flexbox in App.js */
 }

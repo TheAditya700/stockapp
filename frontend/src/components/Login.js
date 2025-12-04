@@ -11,6 +11,7 @@ function Login({ onLogin }) {
   const [building, setBuilding] = useState(''); // For address building
   const [hno, setHno] = useState(''); // For address house number
   const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [isRegistering, setIsRegistering] = useState(false); // Toggle between login and registration
 
@@ -19,6 +20,7 @@ function Login({ onLogin }) {
     e.preventDefault();
     setLoading(true);
     setError('');
+    setSuccessMessage('');
 
     try {
       // Login request
@@ -51,7 +53,7 @@ function Login({ onLogin }) {
           setError('An error occurred. Please try again.');
         }
       } else {
-        setError('Registered Successfully.');
+        setError('Login failed. Network error?');
       }
     } finally {
       setLoading(false);
@@ -63,6 +65,7 @@ function Login({ onLogin }) {
     e.preventDefault();
     setLoading(true);
     setError('');
+    setSuccessMessage('');
 
     try {
       // Registration request
@@ -84,10 +87,17 @@ function Login({ onLogin }) {
       });
 
       if (registerResponse.status === 201) {
-        // Optionally, auto-login after successful registration
-        const userId = registerResponse.data.user.uid; // Get the user ID
-        const userResponse = await axios.get(`/user/${userId}`);
-        onLogin(userResponse.data);
+        // Registration successful
+        setIsRegistering(false); // Switch to login mode
+        setSuccessMessage('Registration successful! Please login.');
+        // Optionally clear sensitive fields but keep email for convenience
+        setPassword('');
+        setName('');
+        setPhoneNumber('');
+        setLocality('');
+        setCity('');
+        setBuilding('');
+        setHno('');
       } else {
         setError('Registration failed. Please try again.');
       }
@@ -103,9 +113,10 @@ function Login({ onLogin }) {
   };
 
   return (
-    <div className="login-container">
-      <h2>{isRegistering ? 'Register' : 'Login'}</h2>
-      {error && <p className="text-danger">{error}</p>}
+    <div className="login-container card p-4 shadow" style={{ maxWidth: '400px', width: '100%' }}>
+      <h2 className="text-center mb-4">{isRegistering ? 'Register' : 'Login'}</h2>
+      {error && <p className="text-danger text-center">{error}</p>}
+      {successMessage && <p className="text-success text-center">{successMessage}</p>}
       
       <form onSubmit={isRegistering ? handleRegisterSubmit : handleLoginSubmit}>
         {isRegistering && (
@@ -205,10 +216,10 @@ function Login({ onLogin }) {
         </button>
       </form>
 
-      <div className="mt-3">
+      <div className="mt-3 text-center">
         <span>{isRegistering ? 'Already have an account?' : 'Don\'t have an account?'} </span>
         <button 
-          className="btn btn-link" 
+          className="btn btn-link p-0 align-baseline" 
           onClick={() => setIsRegistering(!isRegistering)}>
           {isRegistering ? 'Login here' : 'Register here'}
         </button>

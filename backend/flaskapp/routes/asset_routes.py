@@ -66,7 +66,7 @@ def get_asset_prices(aid):
         # Convert SQLAlchemy result to JSON serializable format
         price_data = [
             {
-                'date': row.date.strftime('%Y-%m-%d'),
+                'date': row.date.strftime('%Y-%m-%d %H:%M:%S'),
                 'close_price': float(row.close_price)
             }
             for row in prices

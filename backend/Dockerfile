@@ -19,4 +19,4 @@ ENV FLASK_APP=flaskapp/app.py
 ENV FLASK_RUN_HOST=0.0.0.0
 
 # Run the app when the container launches
-CMD ["flask", "run", "--host=0.0.0.0", "--port=5000"]
+CMD ["/app/entrypoint.sh"]

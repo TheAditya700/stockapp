@@ -40,6 +40,10 @@ const Watchlist = ({ userData, activeWatchlist }) => {
 
   useEffect(() => {
     fetchAssets();
+
+    // Auto-refresh assets every 10 seconds
+    const intervalId = setInterval(fetchAssets, 10000);
+    return () => clearInterval(intervalId);
   }, [selectedWatchlist, fetchAssets]);
 
   // Add a new watchlist

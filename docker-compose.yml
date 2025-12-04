@@ -17,11 +17,26 @@ services:
     build: ./backend
     container_name: flask_backend
     ports:
-      - "5001:5000"
+      - "5000:5000"
     environment:
-      - DATABASE_URL=mysql+pymysql://root:linux@db/stock_app
-      - FLASK_APP=flaskapp/app.py
-      - FLASK_RUN_HOST=0.0.0.0
+      DATABASE_URL: mysql+pymysql://root:linux@db/stock_app
+      FLASK_APP: flaskapp/app.py
+      FLASK_RUN_HOST: 0.0.0.0
+      FLASK_ENV: development
+      FLASK_DEBUG: 1
+    volumes:
+      - ./backend:/app
+    depends_on:
+      - db
+    networks:
+      - stockapp-network
+
+  ticker:
+    build: ./backend
+    container_name: stock_ticker
+    command: /app/ticker.sh
+    environment:
+      DATABASE_HOST: db
     volumes:
       - ./backend:/app
     depends_on:
@@ -35,7 +50,10 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - ./frontend:/app
+      - ./frontend:/app            # frontend live reload
+      - /app/node_modules          # prevent node_modules override
+    stdin_open: true
+    tty: true
     depends_on:
       - backend
     networks:

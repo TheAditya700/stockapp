@@ -52,20 +52,28 @@ const Portfolio = ({ userData, onOrder }) => {
   }, [setTotalProfit, setTotalProfitPercentage]);
 
   useEffect(() => {
-    if (userData && userData.uid) {
-      fetch(`/api/portfolio/${userData.uid}`)
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-          return response.json();
-        })
-        .then((data) => {
-          setPortfolioData(data);
-          calculateTotalProfitAndPercentage(data);
-        })
-        .catch((error) => console.error('Error fetching portfolio data:', error));
-    }
+    const fetchPortfolio = () => {
+      if (userData && userData.uid) {
+        fetch(`/api/portfolio/${userData.uid}`)
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error('Network response was not ok');
+            }
+            return response.json();
+          })
+          .then((data) => {
+            setPortfolioData(data);
+            calculateTotalProfitAndPercentage(data);
+          })
+          .catch((error) => console.error('Error fetching portfolio data:', error));
+      }
+    };
+
+    fetchPortfolio();
+    
+    const intervalId = setInterval(fetchPortfolio, 10000);
+    return () => clearInterval(intervalId);
+
   }, [userData, calculateTotalProfitAndPercentage]);
 
   return (

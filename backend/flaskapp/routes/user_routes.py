@@ -74,57 +74,80 @@ user_bp = Blueprint('user_bp', __name__)
 @user_bp.route('/register', methods=['POST'])
 def register_user():
     try:
+        print("--- STARTING REGISTRATION ---")
         data = request.get_json()
-
-        # Extract the fields from the request body
+        
+        # 1. Validate Input Data
+        if not data:
+            return jsonify({"error": "No JSON data received"}), 400
+            
         uname = data.get('uname')
         uemail = data.get('uemail')
-        upno = data.get('upno')  # Phone number
-        address = data.get('address')  # Address
         password = data.get('password')
+        address = data.get('address') # Expecting a nested dict
 
-        # Check if the user already exists
-        user_exist = db.session.execute(text("SELECT uid FROM `User` WHERE uemail = :email"), {'email': uemail}).fetchone()
+        if not all([uname, uemail, password, address]):
+            print("Missing fields:", data)
+            return jsonify({"error": "Missing required fields (uname, uemail, password, address)"}), 400
+
+        # 2. Check if User Exists
+        print(f"Checking if user {uemail} exists...")
+        user_exist = db.session.execute(
+            text("SELECT uid FROM `User` WHERE uemail = :email"), 
+            {'email': uemail}
+        ).fetchone()
+        
         if user_exist:
             return jsonify({"error": "User already exists"}), 409
 
-        # Insert address into the Address table
+        # 3. Insert Address
+        print("Inserting Address...")
         sql_insert_address = text("""
             INSERT INTO Address (locality, city, building, hno) 
             VALUES (:locality, :city, :building, :hno)
         """)
+        
+        # Safe .get() to avoid crashing if fields are missing inside address
         db.session.execute(sql_insert_address, {
-            'locality': address.get('locality'),
-            'city': address.get('city'),
-            'building': address.get('building'),
-            'hno': address.get('hno')
+            'locality': address.get('locality', ''),
+            'city': address.get('city', ''),
+            'building': address.get('building', ''),
+            'hno': address.get('hno', '')
         })
-        db.session.commit()
+        
+        # Get the ID of the address we just inserted
+        address_id_row = db.session.execute(text("SELECT LAST_INSERT_ID()")).fetchone()
+        address_id = address_id_row[0]
+        print(f"Address created with ID: {address_id}")
 
-        # Get the inserted address_id
-        address_id = db.session.execute(text("SELECT LAST_INSERT_ID()")).fetchone()[0]
-
-        # Hash the password for security
+        # 4. Insert User
+        print("Hashing password and inserting User...")
         hashed_password = generate_password_hash(password)
 
-        # Insert the new user into the database
         sql_insert_user = text("""
             INSERT INTO `User` (uname, uemail, upno, equity_funds, commodity_funds, address_id, password)
             VALUES (:uname, :uemail, :upno, 0.00, 0.00, :address_id, :password)
         """)
+        
         db.session.execute(sql_insert_user, {
             'uname': uname,
             'uemail': uemail,
-            'upno': upno,  # Phone number
-            'address_id': address_id,  # Address ID
+            'upno': data.get('upno', ''), 
+            'address_id': address_id, 
             'password': hashed_password
         })
+        
+        # 5. Commit Transaction
+        # This will trigger the SQL Trigger 'insert_portfolio_after_user'
         db.session.commit()
+        print("--- REGISTRATION SUCCESSFUL ---")
 
         return jsonify({"message": "User registered successfully"}), 201
 
     except Exception as e:
-        print(f"Error during user registration: {str(e)}")
+        db.session.rollback() # Undo changes if anything failed
+        print("!!! ERROR DURING REGISTRATION !!!")
+        print(traceback.format_exc()) # This prints the EXACT error to your console/docker logs
         return jsonify({"error": str(e)}), 500
 
 
@@ -485,7 +508,7 @@ def manage_funds(uid):
     """
     try:
         data = request.get_json()
-
+        sql_query = ""
         # Validate input data
         fund_type = data.get('type')  # "equity" or "commodity"
         action = data.get('action')  # "add" or "withdraw"
