@@ -159,7 +159,7 @@ For testing and demonstration purposes, the application comes initialized with 1
 | Karan Desai      | `karan.desai@example.com`   |
 | Neha Verma       | `neha.verma@example.com`    |
 
-## 🤖 AI Assistance & Acknowledgments
+## AI Assistance & Acknowledgments
 
 This project was developed with support from modern AI tools, which helped accelerate implementation and improve code quality.
 
