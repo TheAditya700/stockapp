@@ -2,6 +2,8 @@
 
 StockStock is a comprehensive full-stack web application designed for managing financial assets. It allows users to track real-time stock and commodity prices, manage a portfolio, execute buy/sell orders, and analyze their financial performance through interactive charts and detailed reports.
 
+Link to video demo: https://youtu.be/_HeNL79Tzk0
+
 The application is built using a modern tech stack:
 - **Frontend:** React.js with Bootstrap for a responsive UI.
 - **Backend:** Flask (Python) providing a RESTful API.
@@ -156,3 +158,15 @@ For testing and demonstration purposes, the application comes initialized with 1
 | Simran Singh     | `simran.singh@example.com`  |
 | Karan Desai      | `karan.desai@example.com`   |
 | Neha Verma       | `neha.verma@example.com`    |
+
+## 🤖 AI Assistance & Acknowledgments
+
+This project was developed with support from modern AI tools, which helped accelerate implementation and improve code quality.
+
+- **ChatGPT (OpenAI GPT-4.1 / GPT-5.1)**  
+  Assisted in backend architecture decisions, debugging Flask API routes, optimizing MySQL queries, designing the order-matching engine, and improving Docker & deployment workflows.
+
+- **Google Gemini**  
+  Helped refine frontend UI components, improve React code organization, draft documentation sections, and validate overall project structure.
+
+All code was written, tested, and validated manually. AI tools were used only for guidance, debugging support, and productivity—not for generating full application components.
