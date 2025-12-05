@@ -145,3 +145,41 @@ def get_total_values(uid):
     except Exception as e:
         print(f"Error fetching total values: {e}")
         return jsonify({'error': 'Failed to fetch total equity and commodity values'}), 500
+
+@portfolio_bp.route('/user/<int:uid>/portfolio_history', methods=['GET'])
+def get_portfolio_history(uid):
+    try:
+        # Calculate historical value of CURRENT holdings
+        # We assume the user held these quantities throughout the history (standard "Value of Current Holdings" chart)
+        sql_query = text("""
+            SELECT 
+                p.date, 
+                SUM(p.close_price * pa.qty) as total_value
+            FROM 
+                Price p
+            JOIN 
+                Portfolio_Asset pa ON p.aid = pa.aid
+            JOIN 
+                Portfolio port ON pa.pid = port.pid
+            WHERE 
+                port.uid = :uid
+            GROUP BY 
+                p.date
+            ORDER BY 
+                p.date ASC
+        """)
+        
+        result = db.session.execute(sql_query, {'uid': uid})
+        history = []
+        
+        for row in result:
+            history.append({
+                'date': row[0].strftime('%Y-%m-%d %H:%M:%S'),
+                'value': float(row[1])
+            })
+
+        return jsonify(history)
+
+    except Exception as e:
+        print(f"Error fetching portfolio history: {e}")
+        return jsonify({'error': 'Failed to fetch portfolio history'}), 500

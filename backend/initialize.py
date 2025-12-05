@@ -63,7 +63,8 @@ def main():
             "initialise_dummy_users.py", # 2. Users & Addresses & Portfolios
             "randomportfolio.py",        # 3. Portfolio Holdings
             "randomorders.py",           # 4. Orders & Matching
-            "randomwatchlist.py"         # 5. Watchlists
+            "generate_history.py",       # 5. Guaranteed Completed Orders (History)
+            "randomwatchlist.py"         # 6. Watchlists
         ]
         
         for script in scripts:

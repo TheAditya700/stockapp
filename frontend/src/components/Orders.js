@@ -40,7 +40,7 @@ const Orders = ({ userData }) => {
 
       {/* Table for Pending Orders */}
       <div className="mb-4">
-        <h3>Pending Orders</h3>
+        <h3><span className="order-heading">Pending Orders</span></h3>
         <table className="table table-striped">
           <thead>
             <tr>
@@ -81,7 +81,7 @@ const Orders = ({ userData }) => {
 
       {/* Table for Completed Orders */}
       <div>
-        <h3>Completed Orders</h3>
+        <h3><span className="order-heading">Completed Orders</span></h3>
         <table className="table table-striped">
           <thead>
             <tr>

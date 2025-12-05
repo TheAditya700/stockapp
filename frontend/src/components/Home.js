@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { Pie } from 'react-chartjs-2';
+import { Pie, Line } from 'react-chartjs-2';
 import 'chart.js/auto';
 
 const Home = ({ userData }) => {
@@ -13,6 +13,7 @@ const Home = ({ userData }) => {
   const [loading, setLoading] = useState(true);
   const [totalEquityValue, setTotalEquityValue] = useState(0);
   const [totalCommodityValue, setTotalCommodityValue] = useState(0);
+  const [portfolioHistory, setPortfolioHistory] = useState([]);
 
   const equity = userData ? Number(userData.equity_funds) || 0 : 0;
   const commodity = userData ? Number(userData.commodity_funds) || 0 : 0;
@@ -77,6 +78,16 @@ const Home = ({ userData }) => {
         .catch((error) => {
           console.error('Error fetching total values:', error);
         });
+
+      // Fetch portfolio history
+      fetch(`/api/user/${userData.uid}/portfolio_history`)
+        .then((res) => res.json())
+        .then((data) => {
+            setPortfolioHistory(data);
+        })
+        .catch((error) => {
+            console.error('Error fetching portfolio history:', error);
+        });
     }
   }, [userData]);
 
@@ -106,10 +117,31 @@ const Home = ({ userData }) => {
     datasets: [
       {
         data: [totalEquityValue, totalCommodityValue], // Use total equity and commodity values here
-        backgroundColor: ['#36A2EB', '#FF6384'],
-        hoverBackgroundColor: ['#36A2EB', '#FF6384']
+        backgroundColor: ['#55868c', '#704e2e'], // Dark Cyan (Equity), Coffee Bean (Commodity)
+        hoverBackgroundColor: ['#3d6064', '#5a3e25']
       }
     ]
+  };
+
+  const lineChartData = {
+    labels: portfolioHistory.map(item => {
+        const date = new Date(item.date);
+        // Format time as HH:mm for intraday data
+        return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }),
+    datasets: [
+      {
+        label: 'Portfolio Value',
+        data: portfolioHistory.map(item => item.value),
+        fill: true,
+        backgroundColor: 'rgba(85, 134, 140, 0.2)', // Light Dark Cyan
+        borderColor: '#55868c', // Dark Cyan
+        tension: 0.4, // Smooth curve
+        pointRadius: 0, // Hide points for smoother look on high-density data
+        hoverPointRadius: 4,
+        pointBackgroundColor: '#23001e', // Midnight Violet
+      },
+    ],
   };
 
   if (loading) {
@@ -120,53 +152,89 @@ const Home = ({ userData }) => {
     <div className="container my-4">
       <h1 className="mb-4">Hi, {userName}</h1>
 
+      {/* Row 1: Total Portfolio Value (Full Width) */}
       <div className="row mb-4">
-        {/* Equity Card */}
-        <div className="col-md-6 mb-4">
-          <div className="card text-center h-100">
-            <div className="card-body">
-              <h5 className="card-title">Equity</h5>
-              <h2>{formatNumber(availableMarginEquity)}</h2>
-              <p>Margin Available</p>
-              <p>Funds: {formatNumber(equity)}</p>
-              <p>Utilized Margin: {formatNumber(utilizedMarginEquity)}</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Commodity Card */}
-        <div className="col-md-6 mb-4">
-          <div className="card text-center h-100">
-            <div className="card-body">
-              <h5 className="card-title">Commodity</h5>
-              <h2>{formatNumber(availableMarginCommodity)}</h2>
-              <p>Margin Available</p>
-              <p>Funds: {formatNumber(commodity)}</p>
-              <p>Utilized Margin: {formatNumber(utilizedMarginCommodity)}</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Total Profit and Portfolio Value Card */}
-        <div className="col-md-12 mb-4 h-100">
-          <div className="card text-center h-100">
-            <div className="card-body">
-              <h5 className="card-title">Total Portfolio Value</h5>
-              <h2>{formatNumber(portfolioValue)}</h2>
-              <p>Total Profit: <span style={{ color: totalProfit >= 0 ? 'green' : 'red' }}>{formatNumber(totalProfit)}</span></p>
-              <p>Profit Percentage: {profitPercentage}%</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Portfolio Distribution Chart */}
         <div className="col-md-12 mb-4 h-100">
           <div className="card text-center h-100">
             <div className="card-body d-flex flex-column justify-content-center align-items-center">
-              <h5 className="card-title mb-3">Portfolio Distribution</h5>
-              <div style={{ width: '60%', margin: '0 auto' }}>
+              <h6 className="card-title text-uppercase text-muted mb-3">Total Portfolio Value</h6>
+              <h2 className="mb-3" style={{ fontSize: '2.5rem' }}>{formatNumber(portfolioValue)}</h2>
+              <div className="d-flex gap-4">
+                <p className="mb-0 fs-5">Total Profit: <span style={{ 
+                  color: 'var(--midnight-violet)', 
+                  backgroundColor: totalProfit >= 0 ? 'var(--celadon)' : 'var(--cotton-rose)',
+                  padding: '4px 12px',
+                  borderRadius: '20px',
+                  fontWeight: 'bold'
+                }}>{formatNumber(totalProfit)}</span></p>
+                <p className="mb-0 fs-5">Return: <span className="fw-bold">{profitPercentage}%</span></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Row 2: Charts (History & Distribution) */}
+      <div className="row mb-4">
+        <div className="col-md-6 mb-4">
+          <div className="card text-center h-100">
+            <div className="card-body">
+              <h6 className="card-title text-uppercase text-muted mb-3">Value of Current Holdings</h6>
+              <div style={{ height: '300px', width: '100%' }}>
+                <Line 
+                    data={lineChartData} 
+                    options={{
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            x: { 
+                                grid: { display: false },
+                                ticks: { maxTicksLimit: 6 } // Limit x-axis labels to avoid crowding
+                            },
+                            y: { beginAtZero: false } 
+                        }
+                    }} 
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="col-md-6 mb-4">
+          <div className="card text-center h-100">
+            <div className="card-body d-flex flex-column justify-content-center align-items-center">
+              <h6 className="card-title text-uppercase text-muted mb-3">Portfolio Distribution</h6>
+              <div style={{hieght: '300px', margin: '0 auto' }}>
                 <Pie data={pieData} />
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Row 3: Equity and Commodity Stats */}
+      <div className="row mb-4">
+        <div className="col-md-6 mb-4">
+          <div className="card text-center h-100">
+            <div className="card-body">
+              <h6 className="card-title text-uppercase text-muted mb-2">Equity</h6>
+              <h3>{formatNumber(availableMarginEquity)}</h3>
+              <p className="small text-muted mb-1">Margin Available</p>
+              <p className="mb-1">Funds: {formatNumber(equity)}</p>
+              <p className="mb-0">Utilized: {formatNumber(utilizedMarginEquity)}</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="col-md-6 mb-4">
+          <div className="card text-center h-100">
+            <div className="card-body">
+              <h6 className="card-title text-uppercase text-muted mb-2">Commodity</h6>
+              <h3>{formatNumber(availableMarginCommodity)}</h3>
+              <p className="small text-muted mb-1">Margin Available</p>
+              <p className="mb-1">Funds: {formatNumber(commodity)}</p>
+              <p className="mb-0">Utilized: {formatNumber(utilizedMarginCommodity)}</p>
             </div>
           </div>
         </div>

@@ -121,18 +121,24 @@ const Watchlist = ({ userData, activeWatchlist }) => {
         {/* Inline Form for Adding Watchlist */}
         <li className="nav-item">
           {isAdding ? (
-            <form onSubmit={handleNewWatchlistSubmit} className="d-flex align-items-center">
+            <form onSubmit={handleNewWatchlistSubmit} className="d-flex align-items-center p-2">
               <input
                 type="text"
-                className="form-control"
-                placeholder="Enter Watchlist Name"
+                className="form-control me-2"
+                placeholder="New Watchlist Name"
                 value={newWatchlistName}
                 onChange={(e) => setNewWatchlistName(e.target.value)}
                 autoFocus
               />
               <button
+                type="submit"
+                className="btn btn-sm btn-primary"
+              >
+                Add
+              </button>
+              <button
                 type="button"
-                className="btn btn-secondary ms-2"
+                className="btn btn-sm btn-secondary ms-2"
                 onClick={() => {
                   setIsAdding(false);
                   setNewWatchlistName('');
@@ -167,7 +173,8 @@ const Watchlist = ({ userData, activeWatchlist }) => {
                   <td>{asset.current_price}</td>
                   <td>
                     <button
-                      className="btn btn-danger"
+                      className="btn"
+                      style={{ backgroundColor: 'var(--cotton-rose)', color: 'var(--midnight-violet)', fontWeight: 'bold' }}
                       onClick={() => handleRemoveAsset(asset.aid)}
                     >
                       Remove
@@ -178,14 +185,23 @@ const Watchlist = ({ userData, activeWatchlist }) => {
             </tbody>
           </table>
         ) : (
-          <p>No assets in this watchlist.</p>
+          <p className="alert alert-info text-center mt-4">
+            This watchlist is empty. To add assets, navigate to the <strong style={{ color: 'var(--coffee-bean)' }}>Asset tab</strong>, select an asset, and then choose this watchlist from the "Add to Watchlist" section.
+          </p>
         )}
       </div>
 
       {/* Delete Watchlist Button */}
       <div className="mt-3">
+        {selectedWatchlist && watchlistAssets.length > 0 && (
+          <p className="alert alert-info text-center">
+            To add stocks to <strong style={{ color: 'var(--coffee-bean)' }}>{watchlists.find(w => w.wid === selectedWatchlist)?.wname}</strong>,
+            select an asset from the sidebar and click on "Add to Watchlist" from the Asset tab.
+          </p>
+        )}
         <button
-          className="btn btn-danger"
+          className="btn"
+          style={{ backgroundColor: 'var(--cotton-rose)', color: 'var(--midnight-violet)', fontWeight: 'bold' }}
           onClick={handleDeleteWatchlist}
           disabled={!selectedWatchlist} // Disable if no watchlist is selected
         >

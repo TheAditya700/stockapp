@@ -1,13 +1,121 @@
-# StockApp - Financial Asset Management System
+# StockStock - Financial Asset Management System
 
-A full-stack stock trading application featuring a real-time simulated market environment, portfolio management, and order matching engine. Built with React (Frontend), Flask (Backend), and MySQL (Database).
+StockStock is a comprehensive full-stack web application designed for managing financial assets. It allows users to track real-time stock and commodity prices, manage a portfolio, execute buy/sell orders, and analyze their financial performance through interactive charts and detailed reports.
 
-## 🚀 Quick Start
+The application is built using a modern tech stack:
+- **Frontend:** React.js with Bootstrap for a responsive UI.
+- **Backend:** Flask (Python) providing a RESTful API.
+- **Database:** MySQL for robust data persistence.
+- **Containerization:** Docker & Docker Compose for easy deployment.
+
+---
+
+## Application Overview & Features
+
+### 1. Secure Authentication
+**Screenshot:** `screenshots/Login.png`
+
+![Login Page](screenshots/Login.png)
+
+*   **Split-Screen Interface:** A modern, visually appealing login and registration screen.
+*   **User Registration:** New users can sign up with their personal details, address, and contact information.
+*   **Secure Login:** Existing users can securely log in to access their personalized dashboard.
+
+### 2. Dashboard (Home)
+**Screenshot:** `screenshots/Home.png`
+
+![Home Dashboard](screenshots/Home.png)
+
+*   **Portfolio Summary:** At-a-glance view of Total Portfolio Value, Total Profit, and Return Percentage.
+*   **Visual Analytics:**
+    *   **Value of Current Holdings:** A line chart visualizing the historical performance of the user's current assets.
+    *   **Portfolio Distribution:** A pie chart showing the allocation between Equity and Commodity assets.
+*   **Margin Status:** Detailed cards showing Available Margin, Utilized Margin, and Total Funds for both Equity and Commodity segments.
+
+### 3. Portfolio Management
+**Screenshot:** `screenshots/Portfolio.png`
+
+![Portfolio](screenshots/Portfolio.png)
+
+*   **Holdings Table:** A detailed list of all assets currently owned by the user.
+*   **Real-Time Profit/Loss:** Dynamic calculation of profit/loss for each asset based on current market prices.
+*   **Visual Indicators:** Color-coded badges make it easy to assess performance instantly.
+
+### 4. Asset Watchlists
+**Screenshot:** `screenshots/Watchlist.png`
+
+![Watchlist](screenshots/Watchlist.png)
+
+*   **Custom Watchlists:** Users can create multiple named watchlists to track different groups of assets.
+*   **Asset Management:** Easily remove assets from a watchlist or delete entire watchlists when they are no longer needed.
+*   **Integration:** Assets can be added directly to a specific watchlist from the Asset Details page.
+
+### 5. Order Management
+**Screenshot:** `screenshots/Orders.png`
+
+![Orders](screenshots/Orders.png)
+
+*   **Pending Orders:** View and manage orders that are waiting execution. Users can cancel (delete) pending orders to release locked funds.
+*   **Completed Orders:** A historical record of all successfully executed trades.
+*   **Order Details:** key information like Asset Name, Type (Buy/Sell), Quantity, Price, and Date/Time.
+
+### 6. Asset Analysis & Trading
+**Screenshot:** `screenshots/Asset.png`
+
+![Asset Details](screenshots/Asset.png)
+
+*   **Price History Graph:** An interactive line chart showing the intraday price movement of the selected asset.
+*   **Trading Interface:** A streamlined form to place Buy or Sell orders with automatic cost calculation and validation.
+*   **Add to Watchlist:** specific assets can be quickly added to any of the user's created watchlists.
+
+### 7. User Profile & Fund Management
+**Screenshot:** `screenshots/User.png`
+
+![User Profile](screenshots/User.png)
+
+*   **Profile Management:** View account details and manage saved addresses.
+*   **Fund Management:** Add or withdraw funds for Equity or Commodity trading using different payment modes (UPI, Card).
+*   **Security:** Update account password securely.
+*   **Session Control:** Secure Logout functionality.
+
+---
+
+## Technicals
+
+### Data Initialization (on First Startup)
+On the very first startup, the system automatically runs a series of scripts (`initialize.py` and its sub-scripts) to populate the database, providing a fully functional demo environment. This process includes:
+*   **Users & Addresses**: 10 dummy users are created with unique details and linked addresses. Their default password is `password123`. For example, you can log in with `amit.sharma@example.com` and `password123`.
+*   **Assets & Prices**: A comprehensive list of equity and commodity assets are generated, along with 1 hour of high-frequency historical price data for each.
+*   **Portfolios**: Each user is assigned a diverse portfolio, ensuring they hold a mix of both equity and commodity assets.
+*   **Orders & Transactions**: Random pending orders are generated, and a history of completed transactions is created, ensuring every user has some trading activity recorded.
+*   **Watchlists**: Users are provided with pre-populated watchlists.
+
+### Order Matching System
+The application features a robust order matching engine, primarily managed by the `MatchOrders` MySQL stored procedure.
+
+*   **Logic**: It continuously scans for `Pending` Buy and Sell orders for the same asset. A match occurs when a Buy order's price is greater than or equal to a Sell order's price (`Buy.price >= Sell.price`).
+*   **Partial Orders**: The system efficiently handles partial order fulfillment. If a buy or sell order's quantity exceeds the available match, a transaction is recorded for the matched quantity, and the original pending order's quantity is updated to reflect the remaining balance.
+*   **Price Execution**: Orders are typically executed at the seller's specified price (or the matching price).
+*   **FIFO Prioritization**: Orders are processed on a First-In-First-Out (FIFO) basis, based on their date and time.
+*   **Database Consistency**: Upon a successful match, the system ensures atomicity and consistency across the database:
+    *   A record is created in the `Transaction` table.
+    *   `Portfolio_Asset` holdings are updated for both buyer and seller.
+    *   Triggers automatically adjust `User` equity and commodity funds based on the transaction value.
+
+### Market Data Ticker
+A dedicated `ticker` service runs continuously in the background to simulate real-time market data updates.
+
+*   **Price Updates**: The `ticker.sh` script (often invoking `updateprices_catchup.py`) regularly updates the `Price` table for all listed assets. This ensures that the `AssetPriceView`, which provides the current market price, is always fresh.
+*   **Data Stored**: The `Price` table captures high-frequency market data including `open_price`, `close_price`, `high`, `low`, `volume`, and the timestamp (`date`) for each asset. This data is crucial for historical analysis and portfolio valuation.
+
+---
+
+## Getting Started
 
 ### Prerequisites
-*   Docker & Docker Compose
+*   Docker Desktop installed and running.
 
-### Running the Application
+### Installation & Quickstart
 
 1.  **Clone the repository:**
     ```bash
@@ -17,80 +125,34 @@ A full-stack stock trading application featuring a real-time simulated market en
 
 2.  **Start the application:**
     ```bash
-    docker-compose up -d --build
+    docker-compose up --build
     ```
 
-    *   This command builds the images for the backend, frontend, and ticker service.
-    *   It initializes the database with:
-        *   50 Equities & 5 Commodities.
-        *   10 Dummy Users with addresses.
-        *   1 Hour of high-frequency historical random data (10-second intervals).
-        *   Random initial portfolios and orders.
-
 3.  **Access the App:**
-    *   **Frontend:** [http://localhost:3000](http://localhost:3000)
-    *   **Backend API:** [http://localhost:5000](http://localhost:5000)
+    *   Frontend: Open your web browser and navigate to `http://localhost:3000`.
 
-## 🔑 Default Credentials
+4.  **Quick Login:**
+    *   Use the following credentials to quickly log in and explore the application:
+        *   **Email:** `amit.sharma@example.com`
+        *   **Password:** `password123`
 
-The system is pre-loaded with 10 dummy users. You can log in with any of the following emails.
+---
 
-**Default Password for ALL users:** `password123`
+## Dummy User Accounts
 
-| Name | Email | Funds (Equity/Commodity) |
-| :--- | :--- | :--- |
-| Amit Sharma | `amit.sharma@example.com` | ₹10,000 / ₹5,000 |
-| Priya Patel | `priya.patel@example.com` | ₹15,000 / ₹3,000 |
-| Priyansh Gupta | `priyansh.gupta@example.com` | ₹20,000 / ₹1,000 |
-| Anjali Nair | `anjali.nair@example.com` | ₹12,000 / ₹2,000 |
-| Vikram Mehta | `vikram.mehta@example.com` | ₹18,000 / ₹4,000 |
-| Deepika Rao | `deepika.rao@example.com` | ₹13,000 / ₹3,500 |
-| Rohan Kallumal | `rohan.k@example.com` | ₹22,000 / ₹2,500 |
-| Simran Singh | `simran.singh@example.com` | ₹16,000 / ₹4,500 |
-| Karan Desai | `karan.desai@example.com` | ₹17,500 / ₹5,000 |
-| Neha Verma | `neha.verma@example.com` | ₹14,000 / ₹1,500 |
+For testing and demonstration purposes, the application comes initialized with 10 dummy user accounts. All accounts share the same default password.
 
-## ✨ Features
+**Default Password for all users:** `password123`
 
-### 1. Real-Time Market Simulation
-*   **High-Frequency Data:** Asset prices update every 10 seconds, simulating a live market.
-*   **Ticker Service:** A background service runs continuously to generate realistic price movements (OHLC) and volume for both Equities and Commodities.
-*   **Historical Data:** Charts display hourly history with 10-second granularity.
-
-### 2. Trading & Order Management
-*   **Buy/Sell Orders:** Place market orders for any asset.
-*   **Order Matching:** A simulated engine matches Buy and Sell orders based on price and time priority.
-*   **Margin Checks:** Automatic validation of available funds (Equity/Commodity) before placing orders.
-
-### 3. Portfolio Management
-*   **Real-Time Valuation:** See your total portfolio value update live as market prices change.
-*   **Profit/Loss Tracking:** Track P&L per asset and for the entire portfolio.
-*   **Holdings:** View detailed breakdown of owned assets.
-
-### 4. User Experience
-*   **Interactive Dashboard:** Visual overview of funds, margins, and portfolio distribution.
-*   **Watchlists:** Create custom watchlists to track specific sectors (e.g., "Tech Giants", "Auto Sector").
-*   **Responsive Design:** Clean, responsive UI with a scrollable sidebar and sticky footer.
-*   **Search:** Quickly find assets via the sidebar search.
-
-## 🛠️ Tech Stack
-
-*   **Frontend:** React.js, Chart.js, Bootstrap 5
-*   **Backend:** Python, Flask, SQLAlchemy, MySQL Connector
-*   **Database:** MySQL 8.0
-*   **Containerization:** Docker, Docker Compose
-
-## 📂 Project Structure
-
-```
-stockapp/
-├── backend/           # Flask API & Data Generators
-│   ├── flaskapp/      # App logic, routes, models
-│   ├── sql_initialisation/ # SQL Scripts (Triggers, Procedures)
-│   └── Dockerfile
-├── frontend/          # React Application
-│   ├── src/           # Components, Styles
-│   └── Dockerfile
-├── docker-compose.yml # Service Orchestration
-└── README.md          # You are here!
-```
+| Name             | Email                       |
+| :--------------- | :-------------------------- |
+| Amit Sharma      | `amit.sharma@example.com`   |
+| Priya Patel      | `priya.patel@example.com`   |
+| Priyansh Gupta   | `priyansh.gupta@example.com`|
+| Anjali Nair      | `anjali.nair@example.com`   |
+| Vikram Mehta     | `vikram.mehta@example.com`  |
+| Deepika Rao      | `deepika.rao@example.com`   |
+| Rohan Kallumal   | `rohan.k@example.com`       |
+| Simran Singh     | `simran.singh@example.com`  |
+| Karan Desai      | `karan.desai@example.com`   |
+| Neha Verma       | `neha.verma@example.com`    |

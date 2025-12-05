@@ -40,12 +40,7 @@ const UserDetails = ({ userData }) => {
     fetchUserData();
   }, [userId]);
 
-  const handleLogout = () => {
-    // Remove user session data (if stored in localStorage or cookies)
-    localStorage.removeItem('userData'); // or cookies.remove('userData')
-    // Refresh the page
-    window.location.reload();
-  };
+
 
   const handleFundsAction = async () => {
     if (fundsAmount <= 0) {
@@ -267,7 +262,6 @@ const UserDetails = ({ userData }) => {
         />
         <button className="btn btn-primary" onClick={handlePasswordUpdate}>Update Password</button>
       </div>
-      <button className="btn btn-danger" onClick={handleLogout}>Logout</button>
     </div>
   );
 };

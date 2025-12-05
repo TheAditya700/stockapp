@@ -5,8 +5,9 @@ import Watchlist from './Watchlist';
 import Orders from './Orders';
 import UserDetails from './UserDetails';
 import AssetDetails from './AssetDetails';
+import './Dashboard.css'; // Import custom styles for tabs and layout
 
-const Dashboard = ({ userData, selectedAsset, setSelectedAsset }) => {
+const Dashboard = ({ userData, selectedAsset, setSelectedAsset, onLogout }) => {
   const [activeTab, setActiveTab] = useState('home');
   const [activeWatchlist, setActiveWatchlist] = useState(null);
 
@@ -32,8 +33,8 @@ const Dashboard = ({ userData, selectedAsset, setSelectedAsset }) => {
     { id: 'portfolio', label: 'Portfolio', component: <Portfolio userData={userData} onOrder={handleOrder} /> },
     { id: 'watchlist', label: 'Watchlist', component: <Watchlist userData={userData} activeWatchlist={activeWatchlist} /> },
     { id: 'orders', label: 'Orders', component: <Orders userData={userData} /> },
-    { id: 'user', label: 'User', component: <UserDetails userData={userData} /> },
     { id: 'asset', label: 'Asset', component: <AssetDetails asset={selectedAsset} userData={userData} onSwitchToWatchlist={handleSwitchToWatchlist} /> },
+    { id: 'user', label: 'User', component: <UserDetails userData={userData} /> },
   ];
 
   return (
@@ -49,6 +50,11 @@ const Dashboard = ({ userData, selectedAsset, setSelectedAsset }) => {
             </button>
           </li>
         ))}
+        <li className="nav-item ms-auto"> {/* ms-auto pushes this to the right */}
+          <button className="btn btn-danger btn-sm" onClick={onLogout}>
+            Logout
+          </button>
+        </li>
       </ul>
 
       <div className="tab-content mt-4">

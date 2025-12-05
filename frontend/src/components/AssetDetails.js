@@ -141,9 +141,11 @@ const AssetDetails = ({ asset, userData, onSwitchToWatchlist }) => {
       {
         label: 'Close Price',
         data: priceData.map((data) => data.close_price),
-        borderColor: '#007bff',
-        fill: false,
-        pointRadius: 1, // Make points smaller for high-density data
+        borderColor: '#55868c', // var(--dark-cyan)
+        backgroundColor: 'rgba(85, 134, 140, 0.1)', // Light fill
+        fill: true,
+        pointRadius: 2,
+        pointBackgroundColor: '#23001e', // var(--midnight-violet)
       },
     ],
   };

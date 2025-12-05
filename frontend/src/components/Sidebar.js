@@ -29,13 +29,14 @@ const Sidebar = ({ userData, onLogout, onSelectAsset }) => {
   return (
     <div className="sidebar bg-light p-3 h-100 d-flex flex-column">
       {/* Search Input - Fixed at top */}
-      <div className="flex-shrink-0">
+      <div className="search-bar mb-4">
         <input
           type="text"
-          className="form-control mb-3"
-          placeholder="Search for assets"
+          className="form-control"
+          placeholder="Search for assets..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
+          style={{ borderColor: 'var(--coffee-bean)' }}
         />
       </div>
 

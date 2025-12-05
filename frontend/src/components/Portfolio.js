@@ -19,12 +19,16 @@ const Portfolio = ({ userData, onOrder }) => {
       : ((currentPrice - buyPrice) / buyPrice) * 100; // For regular buying
 
     // Determine the style based on whether it's a profit, loss, or zero
-    const profitStyle = profit > 0 ? { color: 'green', fontWeight: 'bold' }
-      : profit < 0 ? { color: 'red', fontWeight: 'bold' }
+    const profitStyle = profit > 0 
+      ? { color: 'var(--midnight-violet)', backgroundColor: 'var(--celadon)', padding: '4px 8px', borderRadius: '4px', fontWeight: 'bold' }
+      : profit < 0 
+      ? { color: 'var(--midnight-violet)', backgroundColor: 'var(--cotton-rose)', padding: '4px 8px', borderRadius: '4px', fontWeight: 'bold' }
       : { color: 'grey', fontWeight: 'bold' }; // Grey for zero profit
 
-    const profitPercentageStyle = profitPercentage > 0 ? { color: 'green', fontWeight: 'bold' }
-      : profitPercentage < 0 ? { color: 'red', fontWeight: 'bold' }
+    const profitPercentageStyle = profitPercentage > 0 
+      ? { color: 'var(--midnight-violet)', backgroundColor: 'var(--celadon)', padding: '4px 8px', borderRadius: '4px', fontWeight: 'bold' }
+      : profitPercentage < 0 
+      ? { color: 'var(--midnight-violet)', backgroundColor: 'var(--cotton-rose)', padding: '4px 8px', borderRadius: '4px', fontWeight: 'bold' }
       : { color: 'grey', fontWeight: 'bold' }; // Grey for zero percentage
 
     return {

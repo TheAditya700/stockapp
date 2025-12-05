@@ -1,24 +1,50 @@
 .dashboard h1 {
-    margin-bottom: 30px;
-    font-size: 2rem;
-  }
-  
-  .card {
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  }
-  
-  .card-body h2 {
-    font-size: 3rem;
-  }
-  
-  .market-overview h4 {
-    margin-bottom: 20px;
-  }
-  
-  .market-overview .chartjs-render-monitor {
-    max-height: 400px;
-    width: 100%;
-  }
-  
+  margin-bottom: 30px;
+  font-size: 2rem;
+}
+
+.card {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.card-body h2 {
+  font-size: 3rem;
+}
+
+.market-overview h4 {
+  margin-bottom: 20px;
+}
+
+.market-overview .chartjs-render-monitor {
+  max-height: 400px;
+  width: 100%;
+}
+
+/* Navigation Tabs Styling */
+.nav-tabs .nav-link {
+  color: var(--midnight-violet);
+  font-weight: 500;
+  border: 1px solid transparent;
+  margin-right: 2px;
+}
+
+.nav-tabs .nav-link.active {
+  background-color: var(--midnight-violet);
+  color: white;
+  border-color: var(--midnight-violet);
+}
+
+.nav-tabs .nav-link:hover {
+  color: var(--dark-cyan);
+  border-color: rgba(85, 134, 140, 0.2);
+}
+
+.nav-tabs .nav-link.active:hover {
+  color: white; /* Keep active tab text white on hover */
+}
+
+.order-heading {
+  color: var(--dark-cyan);
+}

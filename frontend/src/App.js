@@ -45,6 +45,7 @@ function App() {
                 userData={userData}
                 selectedAsset={selectedAsset}
                 setSelectedAsset={setSelectedAsset}
+                onLogout={handleLogout}
               />
             </div>
           </div>

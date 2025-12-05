@@ -113,116 +113,136 @@ function Login({ onLogin }) {
   };
 
   return (
-    <div className="login-container card p-4 shadow" style={{ maxWidth: '400px', width: '100%' }}>
-      <h2 className="text-center mb-4">{isRegistering ? 'Register' : 'Login'}</h2>
-      {error && <p className="text-danger text-center">{error}</p>}
-      {successMessage && <p className="text-success text-center">{successMessage}</p>}
-      
-      <form onSubmit={isRegistering ? handleRegisterSubmit : handleLoginSubmit}>
-        {isRegistering && (
-          <>
-            <div className="form-group">
-              <label>Name:</label>
-              <input
-                type="text"
-                className="form-control"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label>Phone Number:</label>
-              <input
-                type="text"
-                className="form-control"
-                value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value)}
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label>Locality:</label>
-              <input
-                type="text"
-                className="form-control"
-                value={locality}
-                onChange={(e) => setLocality(e.target.value)}
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label>City:</label>
-              <input
-                type="text"
-                className="form-control"
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label>Building:</label>
-              <input
-                type="text"
-                className="form-control"
-                value={building}
-                onChange={(e) => setBuilding(e.target.value)}
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label>House Number:</label>
-              <input
-                type="text"
-                className="form-control"
-                value={hno}
-                onChange={(e) => setHno(e.target.value)}
-                required
-              />
-            </div>
-          </>
-        )}
-
-        <div className="form-group">
-          <label>Email:</label>
-          <input
-            type="email"
-            className="form-control"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
+    <div className="row w-100 h-100 g-0">
+      {/* Left Side: Branding and Greeting */}
+      <div className="col-md-6" style={{ padding: '10px 20px 20px 20px' }}>
+        <div className="bg-primary text-white h-100 w-100 d-flex flex-column justify-content-center align-items-center" style={{ borderRadius: '15px' }}>
+            <h1 className="display-3 fw-bold mb-3">StockStock</h1>
+            <h3 className="fw-light">{isRegistering ? 'Hello there!' : 'Welcome back!'}</h3>
         </div>
+      </div>
 
-        <div className="form-group">
-          <label>Password:</label>
-          <input
-            type="password"
-            className="form-control"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
+      {/* Right Side: Form */}
+      <div className="col-md-6 d-flex justify-content-center align-items-center bg-white">
+        <div className="login-container p-4">
+          <h2 className="text-center mb-4">{isRegistering ? 'Register' : 'Login'}</h2>
+          {error && <p className="text-danger text-center">{error}</p>}
+          {successMessage && <p className="text-success text-center">{successMessage}</p>}
+          
+          <form onSubmit={isRegistering ? handleRegisterSubmit : handleLoginSubmit}>
+            {isRegistering && (
+              <>
+                <div className="row">
+                  <div className="col-md-6 form-group mb-3">
+                    <label>Name:</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      required
+                    />
+                  </div>
+
+                  <div className="col-md-6 form-group mb-3">
+                    <label>Phone Number:</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={phoneNumber}
+                      onChange={(e) => setPhoneNumber(e.target.value)}
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="row">
+                  <div className="col-md-6 form-group mb-3">
+                    <label>Locality:</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={locality}
+                      onChange={(e) => setLocality(e.target.value)}
+                      required
+                    />
+                  </div>
+
+                  <div className="col-md-6 form-group mb-3">
+                    <label>City:</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={city}
+                      onChange={(e) => setCity(e.target.value)}
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="row">
+                  <div className="col-md-6 form-group mb-3">
+                    <label>Building:</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={building}
+                      onChange={(e) => setBuilding(e.target.value)}
+                      required
+                    />
+                  </div>
+
+                  <div className="col-md-6 form-group mb-3">
+                    <label>House No:</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={hno}
+                      onChange={(e) => setHno(e.target.value)}
+                      required
+                    />
+                  </div>
+                </div>
+              </>
+            )}
+
+            <div className="form-group mb-3">
+              <label>Email:</label>
+              <input
+                type="email"
+                className="form-control"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className="form-group mb-3">
+              <label>Password:</label>
+              <input
+                type="password"
+                className="form-control"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className="d-grid gap-2">
+                <button type="submit" className="btn btn-primary" disabled={loading}>
+                {loading ? (isRegistering ? 'Registering...' : 'Logging in...') : (isRegistering ? 'Register' : 'Login')}
+                </button>
+            </div>
+          </form>
+
+          <div className="mt-3 text-center">
+            <span>{isRegistering ? 'Already have an account?' : 'Don\'t have an account?'} </span>
+                    <button
+                      className="btn btn-link p-0 align-baseline text-primary"
+                      onClick={() => setIsRegistering(!isRegistering)}>
+                      {isRegistering ? 'Login here' : 'Register here'}
+                    </button>          </div>
         </div>
-
-        <button type="submit" className="btn btn-primary" disabled={loading}>
-          {loading ? (isRegistering ? 'Registering...' : 'Logging in...') : (isRegistering ? 'Register' : 'Login')}
-        </button>
-      </form>
-
-      <div className="mt-3 text-center">
-        <span>{isRegistering ? 'Already have an account?' : 'Don\'t have an account?'} </span>
-        <button 
-          className="btn btn-link p-0 align-baseline" 
-          onClick={() => setIsRegistering(!isRegistering)}>
-          {isRegistering ? 'Login here' : 'Register here'}
-        </button>
       </div>
     </div>
   );

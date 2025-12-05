@@ -1,13 +1,51 @@
+:root {
+  /* CSS HEX */
+  --dark-cyan: #55868c;
+  --midnight-violet: #23001e;
+  --celadon: #bce79f;
+  --cotton-rose: #e5b4b4;
+  --coffee-bean: #704e2e;
+}
+
 body {
   font-family: 'Arial', sans-serif;
   margin: 0;
   padding: 0;
   background-color: #f5f5f5;
-  color: #333;
+  color: var(--midnight-violet);
 }
 
 .App {
   display: flex;
+}
+
+/* Bootstrap Overrides */
+.bg-primary {
+  background-color: var(--midnight-violet) !important;
+}
+
+.text-primary {
+  color: var(--dark-cyan) !important;
+}
+
+.btn-primary {
+  background-color: var(--dark-cyan) !important;
+  border-color: var(--dark-cyan) !important;
+}
+
+.btn-primary:hover, .btn-primary:focus, .btn-primary:active {
+  background-color: #3d6064 !important; /* Darker shade of dark-cyan */
+  border-color: #3d6064 !important;
+}
+
+.btn-outline-primary {
+  color: var(--dark-cyan) !important;
+  border-color: var(--dark-cyan) !important;
+}
+
+.btn-outline-primary:hover {
+  background-color: var(--dark-cyan) !important;
+  color: white !important;
 }
 
 /* Modal overlay for dimmed background */
@@ -17,7 +55,7 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+  background-color: rgba(35, 0, 30, 0.5); /* Midnight violet transparent */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -33,6 +71,7 @@ body {
   max-width: 90%;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   position: relative;
+  border: 1px solid var(--dark-cyan);
 }
 
 /* Close button */
@@ -44,28 +83,29 @@ body {
   background: none;
   border: none;
   cursor: pointer;
-  color: #aaa;
+  color: var(--coffee-bean);
 }
 
 .close-button:hover {
-  color: #000;
+  color: var(--midnight-violet);
 }
 
 .card {
   width: 100%;
   height: 100%;
+  border-color: rgba(85, 134, 140, 0.2); /* faint dark-cyan border */
 }
 
 .bg-success-light {
-  background-color: #b7f2b7; /* Light pastel green */
+  background-color: var(--celadon);
 }
 
 .bg-danger-light {
-  background-color: #f2b7b7; /* Light pastel red */
+  background-color: var(--cotton-rose);
 }
 
 .text-dark {
-  color: #333; /* Dark text for better readability */
+  color: var(--midnight-violet) !important; /* Override text-dark to use our dark color */
 }
 
 /* Sidebar layout */
@@ -76,5 +116,36 @@ body {
 
 /* Ensure the Login form is centered vertically */
 .login-container {
-  /* No margin needed as it's centered by flexbox in App.js */
+  max-width: 500px; /* Max width for the login/register container */
+  width: 100%; /* Ensure it takes full width up to max-width */
+  margin: 0 auto; /* Center horizontally */
+}
+
+.bg-dark-cyan {
+  background-color: var(--dark-cyan) !important;
+}
+
+.btn-danger {
+  background-color: var(--cotton-rose) !important;
+  border-color: var(--cotton-rose) !important;
+  color: var(--midnight-violet) !important;
+  font-weight: bold;
+}
+
+.btn-danger:hover, .btn-danger:focus, .btn-danger:active {
+  background-color: #d1a2a2 !important; /* Slightly darker cotton-rose for hover */
+  border-color: #d1a2a2 !important;
+  color: var(--midnight-violet) !important;
+}
+
+.btn-outline-danger {
+  color: var(--midnight-violet) !important;
+  border-color: var(--midnight-violet) !important;
+  background-color: transparent !important;
+}
+
+.btn-outline-danger:hover, .btn-outline-danger:focus, .btn-outline-danger:active {
+  background-color: var(--cotton-rose) !important;
+  color: var(--midnight-violet) !important;
+  border-color: var(--cotton-rose) !important;
 }
