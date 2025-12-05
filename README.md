@@ -119,7 +119,7 @@ A dedicated `ticker` service runs continuously in the background to simulate rea
 
 1.  **Clone the repository:**
     ```bash
-    git clone <repository-url>
+    git clone https://github.com/TheAditya700/stockapp
     cd stockapp
     ```
 
